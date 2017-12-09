@@ -117,7 +117,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a96ffa3970a526afd3b9ff9c4b009d68e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set barrier mask, should only be called from the master core.  <a href="#a96ffa3970a526afd3b9ff9c4b009d68e">More...</a><br /></td></tr>
 <tr class="separator:a96ffa3970a526afd3b9ff9c4b009d68e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37e0d83a46988913d2752fb04a74fce6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ilm__os__erika_8c.html#a37e0d83a46988913d2752fb04a74fce6">ILM_OS_ActivateILMCoreTasks</a> (<a class="el" href="ilm__types_8h.html#a1dd3e442d80ab439c9c76b678080b41e">ILM_COREMASK_T</a> CoreMask)</td></tr>
-<tr class="memdesc:a37e0d83a46988913d2752fb04a74fce6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns current state of the container task, 1 (running/ready) or 0 (suspended/waiting)  <a href="#a37e0d83a46988913d2752fb04a74fce6">More...</a><br /></td></tr>
+<tr class="memdesc:a37e0d83a46988913d2752fb04a74fce6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Activate ILM handler (as a task) on a remote core.  <a href="#a37e0d83a46988913d2752fb04a74fce6">More...</a><br /></td></tr>
 <tr class="separator:a37e0d83a46988913d2752fb04a74fce6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
@@ -182,15 +182,7 @@ EE_UREG EE_SHARED_UDATA&#160;</td><td class="memItemRight" valign="bottom"><a cl
       </table>
 </div><div class="memdoc">
 
-<p>Returns current state of the container task, 1 (running/ready) or 0 (suspended/waiting) </p>
-<p>Activate ILM handler (as a task) on a remote core.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">TaskId</td><td>Task identifier </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Current state of the container task Activate ILM handler (as a task) on a remote core </dd></dl>
+<p>Activate ILM handler (as a task) on a remote core. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">CoreMask</td><td>Bitmask of included cores with remote tasks </td></tr>
@@ -199,7 +191,7 @@ EE_UREG EE_SHARED_UDATA&#160;</td><td class="memItemRight" valign="bottom"><a cl
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="ilm__os__erika_8c_source.html#l00156">156</a> of file <a class="el" href="ilm__os__erika_8c_source.html">ilm_os_erika.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ilm__os__erika_8c_source.html#l00157">157</a> of file <a class="el" href="ilm__os__erika_8c_source.html">ilm_os_erika.c</a>.</p>
 
 </div>
 </div>
