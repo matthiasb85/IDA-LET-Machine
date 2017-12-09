@@ -1,0 +1,11 @@
+--- ./iLLD_1_0_1_3_0/Src/BaseSw/iLLD/TC27D/Tricore/Ccu6/Std/IfxCcu6.h	2017-11-07 06:42:45.000000000 +0100
++++ ./iLLD_1_0_1_3_0/Src/BaseSw/iLLD/TC27D/Tricore/Ccu6/Std/IfxCcu6.h	2017-12-04 14:35:08.398797511 +0100
+@@ -1482,7 +1482,7 @@
+ 
+ IFX_INLINE void IfxCcu6_enableAdditionalPrescaler(Ifx_CCU6 *ccu6, IfxCcu6_TimerId timer)
+ {
+-    uint32 shift = ((timer * 8) + 2);
++    uint32 shift = ((timer * 8) + 3);
+     uint32 mask  = (1U << shift);
+     ccu6->TCTR0.U = ccu6->TCTR0.U | (mask);
+ }

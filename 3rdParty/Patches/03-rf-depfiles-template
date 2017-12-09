@@ -1,0 +1,10 @@
+--- ./RT-Druid/plugins/com.eu.evidence.ee_2.8.0.20171025_0922/ee_files/pkg/cfg/arch/cc_tricore_gnu_new.mk	2017-10-25 09:23:24.000000000 +0200
++++ ./RT-Druid/plugins/com.eu.evidence.ee_2.8.0.20171025_0922/ee_files/pkg/cfg/arch/cc_tricore_gnu_new.mk	2017-12-05 14:32:28.264953663 +0100
+@@ -425,6 +425,6 @@
+ # Create dependency for all headers, and add a target for each header
+ DEPENDENCY_OPT_ASM = -MD -MF $(call native_path,$(subst .o,.d_tmp,$(@)))
+ # Dependencies on Windows need path translation and quote remotion
+-make-depend = sed -e 's_\\\(.\)_/\1_g' -e 's_\<\([a-zA-Z]\):/_/cygdrive/\l\1/_g' -e 's_\(.*\)\(\/\)_\1\\_g' < $1_tmp > $1 && rm $1_tmp
++make-depend = sed -e 's_\\\(.\)_/\1_g' -e 's_\<\([a-zA-Z]\):/_/cygdrive/\l\1/_g' -e 's_\(.*\)\(\/\)_\1\/_g' < $1_tmp > $1 && rm $1_tmp
+ endif # NODEPS
+ 

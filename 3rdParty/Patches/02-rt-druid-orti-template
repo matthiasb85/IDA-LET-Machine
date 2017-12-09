@@ -1,0 +1,9 @@
+--- ./RT-Druid/plugins/com.eu.evidence.ee_2.8.0.20171025_0922/ee_files/pkg/mcu/infineon_common_tc2Yx/cfg/orti.cmm	2017-10-25 09:23:26.000000000 +0200
++++ ./RT-Druid/plugins/com.eu.evidence.ee_2.8.0.20171025_0922/ee_files/pkg/mcu/infineon_common_tc2Yx/cfg/orti.cmm       2017-12-05 09:54:15.216506637 +0100
+@@ -33,5 +33,5 @@
+ MCDS.SOURCE CPUMUX0 WriteData ON 
+ 
+ ; Read Kernel Markers
+-do markers.cmm
++;do markers.cmm
+ enddo

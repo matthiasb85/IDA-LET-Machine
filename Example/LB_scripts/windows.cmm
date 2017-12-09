@@ -1,0 +1,39 @@
+// T3210000 Fri Sep 22 13:49:58 2017
+
+ B::
+ 
+ TOOLBAR ON
+ STATUSBAR ON
+ FramePOS -1.4286,-1.0,,,Maximized
+ WinPAGE.RESet
+ 
+ WinPAGE.Create P000
+ WinCLEAR
+ 
+ WinPOS 56.0 70.643 86. 11. 0. 0. W001 ICONIC
+ SYnch.state
+ 
+ WinPOS 28.0 70.643 86. 6. 0. 0. W002
+ AREA
+ 
+ WinPOS 182.86 0.0 88. 31. 13. 1. W000
+ WinTABS 10. 10. 25. 62.
+ List.auto
+ 
+ WinPOS 0.0 0.0 88. 31. 13. 1. W005
+ WinTABS 10. 10. 25. 62.
+ Data.List          E: /Track
+ 
+ WinPOS 91.429 0.0 88. 31. 10. 1. W006
+ WinTABS 32.
+ Trace.List            /Track
+ 
+ WinPOS 95.571 36.0 175. 31. 25. 2. W007
+ Trace.Chart.sYmbol    /Track
+ 
+ WinPOS 0.0 36.071 66. 20. 0. 0. W003
+ Trace
+ 
+ WinPAGE.select P000
+ 
+ ENDDO

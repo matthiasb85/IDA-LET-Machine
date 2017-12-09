@@ -50,3 +50,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Downloaded  3rd party files
+3rdParty/Download/*

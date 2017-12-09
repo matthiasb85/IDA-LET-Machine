@@ -1,0 +1,224 @@
+; Script file for TC275TE on TRIBOARD-TC2X5
+;
+; Initializes the TriCore opens AMP environment.
+;
+LOCAL &master_elf &cpu1_elf &cpu2_elf &build_folder
+&build_folder="./Build"
+&master_elf="&build_folder/C0/myProject_C0.elf"
+&cpu1_elf="&build_folder/C1/myProject_C1.elf"
+&cpu2_elf="&build_folder/C2/myProject_C2.elf"
+
+
+; script-local macros:
+LOCAL &portGUI0 &portGUI1 &portGUI2
+LOCAL &addressGUI0 &addressGUI1 &addressGUI2
+LOCAL &core0 &core1 &core2 &coreAll
+
+; intercom setup:
+GOSUB setup_intercom
+
+; check connection / launch GUIs:
+GOSUB other_guis
+
+;========================================================================
+; initialize and start the debugger:
+
+  &coreAll RESet
+  &coreAll SYStem.CPU TC275TF
+  SYStem.CONFIG.DEBUGPORTTYPE DAP2
+  ; mount all cores into the same chip:
+  &core0 SYStem.CONFIG CORE 1. 1.
+  &core1 SYStem.CONFIG CORE 2. 1.
+  &core2 SYStem.CONFIG CORE 3. 1.
+  &core0 SYStem.Up
+  &core1 SYStem.Mode Attach
+  &core2 SYStem.Mode Attach
+
+  ; optional settings:
+  &coreAll SYStem.Option DUALPORT ON
+  &coreAll SETUP.VAR %SpotLight
+  &coreAll MAP.BOnchip 0x0--0xffffffff // force onchip-breakpoints
+
+;========================================================================
+; Load elf file (uses internal RAM only)
+
+  ;; This Approach doesn't work. Maintened as reference for ELFs load order.
+  ; if !("&cpu1_elf"=="")
+  ; (
+  ;   &core1 Data.LOAD.Elf "&cpu1_elf"
+  ; )
+  ; if !("&cpu2_elf"=="")
+  ; (
+  ;   &core2 Data.LOAD.Elf "&cpu2_elf"
+  ; )
+  ; &core0 Data.LOAD.Elf "&master_elf"
+
+  ;; Neither this Approach work. Maintained as reference about RAMs memories ranges.
+  ;&core0 Data.LOAD.Elf "&master_elf" 0x70000000--0x7001C000       ; 112k  dspr0
+  ;&core0 Data.LOAD.Elf "&master_elf" 0x70100000--0x70106000       ; 24k   pspr0
+  ;&core0 Data.LOAD.Elf "&master_elf" 0x90000000--0x90004000       ; 16k   lmuram cached
+  ;&core0 Data.LOAD.Elf "&master_elf" 0xb0000000--0xb0004000       ; 16k   same lmuram not-cached
+
+  &core0 Data.LOAD.Elf "&master_elf"
+  if !("&cpu1_elf"=="")
+  (
+    &core1 Data.LOAD.Elf "&cpu1_elf" 0x60000000--0x6001E000 /NOREG ; 120k dspr1
+    &core1 Data.LOAD.Elf "&cpu1_elf" 0x60100000--0x60106000 /NOREG ; 24k  pspr1
+    &core1 Data.LOAD.Elf "&cpu1_elf" 0x90004000--0x90006000 /NOREG ; 8k   lmuram cached
+    &core1 Data.LOAD.Elf "&cpu1_elf" 0xb0004000--0xb0006000 /NOREG ; 8k   same lmuram not-cached
+  )
+
+  if !("&cpu2_elf"=="")
+  (
+    &core2 Data.LOAD.Elf "&cpu2_elf" 0x50000000--0x5001E000 /NOREG ; 120k dspr2
+    &core2 Data.LOAD.Elf "&cpu2_elf" 0x50100000--0x50106000 /NOREG ; 24k  pspr2
+    &core2 Data.LOAD.Elf "&cpu2_elf" 0x90006000--0x90008000 /NOREG ; 8k   lmuram cached
+    &core2 Data.LOAD.Elf "&cpu2_elf" 0xb0006000--0xb0008000 /NOREG ; 8k   same lmuram not-cached
+  )
+
+IF Analyzer()
+(
+  ; Workaround for AGBT "RLINE repetition" issue:
+  ; - AURIX A-STEP devices only (will be fixed with B-Step)
+  ; - only required when PLL is not configured
+  ; - when configuring PLL make sure that this workaround is included
+  ; Desription: issue will cause corrupted trace data
+  ; Workaround: f(MAX) = f(MCDS) = f(BBB)
+  ; For 100MHz: MAXDIV = 0x2, BBBDIV = 0x1, MCDSDIV = 0x1
+  ; For 50MHz:  MAXDIV = 0x4, BBBDIV = 0x1, MCDSDIV = 0x1
+  PER.Set D:0xF0036034 %Long (Data.Long(D:0xF0036034)&~0x00F)|0x002   ; MAXDIV = 0x2, for 100 MHz
+  ;PER.Set D:0xF0036034 %Long (Data.Long(D:0xF0036034)&~0x00F)|0x004 ; MAXDIV = 0x4, for 50 MHz
+  PER.Set D:0xF0036040 %Long (Data.Long(D:0xF0036040)&~0xF0F)|0x101   ; BBBDIV = 0x1, MCDSDIV = 0x1
+)
+
+; arrange GUIs and open some windows
+&coreAll do LB_scripts/windows.cmm
+
+; load LSA names on C0
+&core0 do LB_scripts/LSA.cmm
+
+; Load ORTI Support
+;&core0 do &build_folder/C0/markers.cmm
+;&core1 do &build_folder/C0/markers.cmm
+;&core2 do &build_folder/C0/markers.cmm
+&coreAll cd &build_folder
+&core0 cd C0
+&core1 cd C1
+&core2 cd C2
+&core0 do orti.cmm
+&core1 do orti.cmm
+&core2 do orti.cmm
+Wait 1s
+&coreAll cd ..
+&coreAll cd ..
+
+; Setup core synchronization
+&coreAll SYnch.MasterGo ON
+&coreAll SYnch.MasterBreak ON
+&coreAll SYnch.MasterStep ON
+&coreAll SYnch.MasterSystemMode ON
+&coreAll SYnch.SlaveGo ON
+&coreAll SYnch.SlaveBreak ON
+&coreAll SYnch.SlaveStep ON
+&coreAll SYnch.SlaveSystemMode ON
+&coreAll SYnch.ON
+&core0 SYnch.Connect &addressGUI1 &addressGUI2
+&core1 SYnch.Connect &addressGUI0 &addressGUI2
+&core2 SYnch.Connect &addressGUI0 &addressGUI1
+
+&coreAll Trace.Method ONCHIP
+
+&core0 MCDS.SOURCE.Set CpuMux0.Core TriCore0
+&core0 MCDS.SOURCE.Set CpuMux0.Program ON
+&core0 MCDS.SOURCE.Set CpuMux0.ReadAddr ON
+&core0 MCDS.SOURCE.Set CpuMux0.WriteAddr OFF
+&core0 MCDS.SOURCE.Set CpuMux0.WriteData OFF
+&core0 MCDS.SOURCE.Set CpuMux0.PTMode CFT
+&core0 MCDS.TraceBuffer DETECT
+&core0 MCDS.Timestamp ON
+
+&core1 MCDS.SOURCE.Set CpuMux1.Core TriCore1
+&core1 MCDS.SOURCE.Set CpuMux1.Program ON
+&core1 MCDS.SOURCE.Set CpuMux1.ReadAddr ON
+&core1 MCDS.SOURCE.Set CpuMux1.WriteAddr OFF
+&core1 MCDS.SOURCE.Set CpuMux1.WriteData OFF
+&core1 MCDS.SOURCE.Set CpuMux1.PTMode CFT
+
+; script ends here
+ENDDO
+
+;========================================================================
+; helper subroutines:
+
+intercom_all:
+(
+  LOCAL &params
+  ENTRY %Line &params
+  &core0 &params
+  &core1 &params
+  &core2 &params
+  RETURN
+)
+
+setup_intercom:
+(
+  &portGUI0=FORMAT.DECIMAL(1.,INTERCOM.PORT())
+  &portGUI1=FORMAT.DECIMAL(1.,INTERCOM.PORT()+1.)
+  &portGUI2=FORMAT.DECIMAL(1.,INTERCOM.PORT()+2.)
+  &addressGUI0="127.0.0.1:&portGUI0"
+  &addressGUI1="127.0.0.1:&portGUI1"
+  &addressGUI2="127.0.0.1:&portGUI2"
+
+  &core0="" // only to improve readability ("INTERCOM.execute &addressGUI0")
+  &core1="INTERCOM.execute &addressGUI1"
+  &core2="INTERCOM.execute &addressGUI2"
+  &coreAll="GOSUB intercom_all "
+  RETURN
+)
+
+other_guis:
+(
+  LOCAL &nodename &launchGUI &p3_tmp &p4_sys &p5_help &p6_pbi &p7_opt &p8_opt &p9_bgnd
+  LOCAL &portTCF1 &portTCF2
+  &portTCF1=FORMAT.DECIMAL(1.,TCF.PORT()+1.)
+  &portTCF2=FORMAT.DECIMAL(1.,TCF.PORT()+2.)
+  
+  &p3_tmp=OS.PTD()
+  &p4_sys=OS.PSD()
+  &p5_help=OS.PHELPD()
+
+  &nodename=NODENAME()
+  IF "&nodename"=="" // no IP address to debug interface -> USB connection
+    &p6_pbi="USB"
+  ELSE
+  (
+    &p6_pbi="NET"
+    &p7_opt="NODE=&nodename"
+    &p8_opt="PACKLEN=1024"
+  )
+
+  ;Check if the machine is a LINUX machine, in this case I have to put new call
+  ;in background 
+  IF (OS.VERSION(0)==0x1X)
+    &p9_bgnd=" &"
+  ELSE
+    &p9_bgnd=""
+
+  WAIT INTERCOM.PING(&addressGUI1) 2.s
+  IF !INTERCOM.PING(&addressGUI1)
+  (
+    PRINT "no debugger / GUI at &addressGUI1 detected, launching second GUI..."
+    &launchGUI=OS.PEF()+" -c "+OS.PPD()+"/config_tc27x_mc.t32 &portGUI1 Trace32_CORE1 &p3_tmp &p4_sys &portTCF1 &p6_pbi &p7_opt &p8_opt CORE=2 &p9_bgnd"
+    OS &launchGUI
+  )
+  WAIT INTERCOM.PING(&addressGUI2) 2.s
+  IF !INTERCOM.PING(&addressGUI2)
+  (
+    PRINT "no debugger / GUI at &addressGUI2 detected, launching third GUI..."
+    &launchGUI=OS.PEF()+" -c "+OS.PPD()+"/config_tc27x_mc.t32 &portGUI2 Trace32_CORE2 &p3_tmp &p4_sys &portTCF2 &p6_pbi &p7_opt &p8_opt CORE=3 &p9_bgnd"
+    OS &launchGUI
+  )
+  WAIT INTERCOM.PING(&addressGUI1) 2.s
+  WAIT INTERCOM.PING(&addressGUI2) 2.s
+  RETURN
+)

@@ -1,0 +1,247 @@
+CPU test_application {
+
+  OS EE {
+    REMOTENOTIFICATION = USE_RPC;
+
+    CFLAGS ="-I../../../3rdParty/iLLD_Build/src";
+    CFLAGS ="-I../../../3rdParty/iLLD_1_0_1_3_0/Src/BaseSw/Infra/Sfr/TC27D/_Reg";
+    CFLAGS ="-I../../../3rdParty/iLLD_1_0_1_3_0/Src/BaseSw/Infra/Platform";
+    CFLAGS ="-I../../../3rdParty/iLLD_1_0_1_3_0/Src/BaseSw/Service/CpuGeneric";
+    CFLAGS ="-I../../../3rdParty/iLLD_1_0_1_3_0/Src/BaseSw/iLLD/TC27D/Tricore";
+    CFLAGS ="-I../../../.";
+    CFLAGS ="-I../../.";
+    CFLAGS ="-fdata-sections -ffunction-sections";
+    CFLAGS ="-O2";
+
+    LDFLAGS ="-Wl,--gc-sections";
+    LDFLAGS ="-L../../../3rdParty/iLLD_Build/lib";      
+    LIBS ="-liLLD";
+
+    EE_OPT = "EE_EXECUTE_FROM_RAM";
+    EE_OPT = "EE_SAVE_TEMP_FILES";
+    EE_OPT = "EE_ICACHE_ENABLED";
+    EE_OPT = "EE_DCACHE_ENABLED";
+    EE_OPT = "EE_TRIBOARD_TC2X5";
+
+    //EE_OPT = "GPIO_SHIELDBUDDY";
+    EE_OPT = "GPIO_TRIBOARD_TC275C";
+
+    EE_OPT = "__TC27XX__";
+    EE_OPT = "IFX_TC27x";
+    EE_OPT = "ERIKA_OS";
+
+    MASTER_CPU = "C0";
+
+    CPU_DATA = TRICORE {
+      ID = "C0";
+      CPU_CLOCK = 200.0;
+      APP_SRC = "master.c ./app_core_0.c ./IO/GPIO/gpio.c ../ILM/src/ilm_core.c ../ILM/os/ilm_os_erika.c ../ILM/hw/ilm_hw_aurix.c ./ILM/cfg/ilm_hooks.c ";
+      MULTI_STACK = TRUE;
+      SYS_STACK_SIZE = 256;
+      COMPILER_TYPE = GNU;
+    };
+
+    CPU_DATA = TRICORE {
+      ID = "C1";
+      APP_SRC = "slave1.c ./app_core_1.c ./IO/GPIO/gpio.c  ../ILM/src/ilm_core.c ../ILM/os/ilm_os_erika.c ../ILM/hw/ilm_hw_aurix.c ./ILM/cfg/ilm_hooks.c";
+      MULTI_STACK = TRUE;
+      SYS_STACK_SIZE = 256;
+      COMPILER_TYPE = GNU;
+    };
+
+    CPU_DATA = TRICORE {
+      ID = "C2";
+      APP_SRC = "slave2.c ./app_core_2.c  ./IO/GPIO/gpio.c ../ILM/src/ilm_core.c ../ILM/os/ilm_os_erika.c ../ILM/hw/ilm_hw_aurix.c ./ILM/cfg/ilm_hooks.c";
+      MULTI_STACK = TRUE;
+      SYS_STACK_SIZE = 256;
+      COMPILER_TYPE = GNU;
+    };
+
+    MCU_DATA = TRICORE {
+      MODEL = TC27x;
+    };
+
+    BOARD_DATA = TRIBOARD_TC2X5;
+
+    STATUS = EXTENDED;
+    ERRORHOOK = TRUE;
+    USERESSCHEDULER = FALSE;
+    ORTI_SECTIONS = ALL;
+
+    // Change this to ECC1 and set ILM_USE_OSEK_ECC	to 1 inside your ./ILM/cfg/ilm_cfg.h
+    // in order to use an ECC task model 
+    KERNEL_TYPE = BCC1; 
+  };
+  	ISR ILM_OS_Isr_C0 {
+	  CPU_ID   = "C0";
+	  CATEGORY = 2;
+	  PRIORITY = 64; // Use Index of CCU60 SR0 
+	  HANDLER  = "ILM_OS_Isr";
+	};
+	ISR ILM_OS_Isr_C1 {
+	  CPU_ID   = "C1";
+	  CATEGORY = 2;
+	  PRIORITY = 64;
+	  HANDLER  = "ILM_OS_Isr";
+	};
+	ISR ILM_OS_Isr_C2 {
+	  CPU_ID   = "C2";
+	  CATEGORY = 2;
+	  PRIORITY = 64;
+	  HANDLER  = "ILM_OS_Isr";
+	};
+  
+   ISR C0_trap_prot {
+     CPU_ID   = "C0";
+     LEVEL = "TRAP_PROT";
+     HANDLER = "C0_trap_prot";   //Trap handler
+     TRAP = TRUE;
+ 	};
+ 	
+    ISR C0_trap_inst {
+     CPU_ID   = "C0";
+     LEVEL = "TRAP_INST";
+     HANDLER = "C0_trap_inst";   //Trap handler
+     TRAP = TRUE;
+ 	};
+ 	
+ 	ISR C0_trap_cont {
+     CPU_ID   = "C0";
+     LEVEL = "TRAP_CONT";
+     HANDLER = "C0_trap_cont";   //Trap handler
+     TRAP = TRUE;
+ 	};
+ 	
+ 	ISR C0_trap_bus {
+     CPU_ID   = "C0";
+     LEVEL = "TRAP_BUS";
+     HANDLER = "C0_trap_bus";   //Trap handler
+     TRAP = TRUE;
+ 	};
+ 	
+  	ISR C0_trap_sys {
+     CPU_ID   = "C0";
+     LEVEL = "TRAP_SYS";
+     HANDLER = "C0_trap_sys";   //Trap handler
+     TRAP = TRUE;
+ 	};
+ 	
+ 	ISR C0_trap_nmi {
+     CPU_ID   = "C0";
+     LEVEL = "TRAP_NMI";
+     HANDLER = "C0_trap_nmi";   //Trap handler
+     TRAP = TRUE;
+ 	};
+
+  TASK C0_T100{
+    CPU_ID = "C0";
+    PRIORITY = 1;
+    AUTOSTART = FALSE;
+    STACK = PRIVATE {
+      SYS_SIZE = 64;
+    };
+    ACTIVATION = 0;
+    SCHEDULE = FULL;
+    EVENT = C0_EV_T100;
+  };
+    TASK C0_T20{
+    CPU_ID = "C0";
+    PRIORITY = 2;
+    AUTOSTART = FALSE;
+    STACK = PRIVATE {
+      SYS_SIZE = 64;
+    };
+    ACTIVATION = 0;
+    SCHEDULE = FULL;
+    EVENT = C0_EV_T20;
+  };
+  TASK C0_T10{
+    CPU_ID = "C0";
+    PRIORITY = 3;
+    AUTOSTART = FALSE;
+    STACK = PRIVATE {
+      SYS_SIZE = 64;
+    };
+    ACTIVATION = 0;
+    SCHEDULE = FULL;
+    EVENT = C0_EV_T10;
+  };
+  EVENT C0_EV_T10	{ MASK = AUTO; };
+  EVENT C0_EV_T20	{ MASK = AUTO; };
+  EVENT C0_EV_T100	{ MASK = AUTO; };
+   	
+  TASK C1_T100{
+    CPU_ID = "C1";
+    PRIORITY = 1;
+    AUTOSTART = FALSE;
+    STACK = PRIVATE {
+      SYS_SIZE = 64;
+    };
+    ACTIVATION = 0;
+    SCHEDULE = FULL;
+    EVENT = C1_EV_T100;
+  };
+    TASK C1_T20{
+    CPU_ID = "C1";
+    PRIORITY = 2;
+    AUTOSTART = FALSE;
+    STACK = PRIVATE {
+      SYS_SIZE = 64;
+    };
+    ACTIVATION = 0;
+    SCHEDULE = FULL;
+    EVENT = C1_EV_T20;
+  };
+  TASK C1_T10{
+    CPU_ID = "C1";
+    PRIORITY = 3;
+    AUTOSTART = FALSE;
+    STACK = PRIVATE {
+      SYS_SIZE = 64;
+    };
+    ACTIVATION = 0;
+    SCHEDULE = FULL;
+    EVENT = C1_EV_T10;
+  };
+  EVENT C1_EV_T100		{ MASK = AUTO; };
+  EVENT C1_EV_T20		{ MASK = AUTO; };
+  EVENT C1_EV_T10		{ MASK = AUTO; };
+
+  TASK C2_T100{
+    CPU_ID = "C2";
+    PRIORITY = 1;
+    AUTOSTART = FALSE;
+    STACK = PRIVATE {
+      SYS_SIZE = 64;
+    };
+    ACTIVATION = 0;
+    SCHEDULE = FULL;
+    EVENT = C2_EV_T100;
+  };
+    TASK C2_T20{
+    CPU_ID = "C2";
+    PRIORITY = 2;
+    AUTOSTART = FALSE;
+    STACK = PRIVATE {
+      SYS_SIZE = 64;
+    };
+    ACTIVATION = 0;
+    SCHEDULE = FULL;
+    EVENT = C2_EV_T20;
+  };
+  TASK C2_T10{
+    CPU_ID = "C2";
+    PRIORITY = 3;
+    AUTOSTART = FALSE;
+    STACK = PRIVATE {
+      SYS_SIZE = 64;
+    };
+    ACTIVATION = 0;
+    SCHEDULE = FULL;
+    EVENT = C2_EV_T10;
+  };
+  EVENT C2_EV_T100		{ MASK = AUTO; };
+  EVENT C2_EV_T20		{ MASK = AUTO; };
+  EVENT C2_EV_T10		{ MASK = AUTO; };
+
+};
