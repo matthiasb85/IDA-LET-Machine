@@ -51,5 +51,9 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-# Downloaded  3rd party files
-3rdParty/Download/*
+# 3rd party files
+*3rdParty/Download/*
+*3rdParty/RT-Druid*
+*3rdParty/iLLD_Build/obj/*
+*3rdParty/iLLD_Build/lib/*
+*3rdParty/iLLD_1*
