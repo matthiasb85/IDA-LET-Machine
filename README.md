@@ -51,7 +51,7 @@ Can't find Infineon iLLD!
   4.) Run 'make'/'make prepare' in ./Example  or Setup3rdPartySoftware.sh in ./3rdParty
 ```
 An important constraint is, that the entire library is available as source code. 
-A Bug inside the official CCU6 driver of the iLLD (which is patched during ./3rdParty/Setup3rdParty.sh) is the reason for this constrain.t
+The reason for this is a bug inside the official CCU6 driver of the iLLD (which is patched during ./3rdParty/Setup3rdParty.sh).
 
 ## Application example
 The application consist of 18 LET tasks.
@@ -69,7 +69,7 @@ Those pin toggles are issued through the ILM hooks and at execution begin/end of
 The physical pin magging is located in ./Example/IO/gpio.c and the hook functions in ./Example/ILM/ilm_hooks.c
 
 If you use a Lauterbach Trace32 based setup, you can use the ''make debug'' command inside ./Example to start a debug session.
-With ''t32_folder'', ''t32_arch`` and ''addr'' you can pass Trace32 base folder, host CPU architecure and IP address (DNS name) of your trace hardware to the system.
+With ''t32_folder'', ''t32_arch'' and ''addr'' you can pass Trace32 base folder, host CPU architecure and IP address (DNS name) of your trace hardware to the system.
 If you don't pass a parameter for ''addr'', Trace32 will search for an USB coupled device.
 As an example, the ''make debug'' call on my PC looks like this:
 ```
