@@ -70,7 +70,7 @@ The physical pin magging is located in ./Example/IO/gpio.c and the hook function
 
 If you use a Lauterbach Trace32 based setup, you can use the ''make debug'' command inside ./Example to start a debug session.
 With ''t32_folder'', ''t32_arch'' and ''addr'' you can pass Trace32 base folder, host CPU architecure and IP address (DNS name) of your trace hardware to the system.
-If you don't pass a parameter for ''addr'', Trace32 will search for an USB coupled device.
+If you omit the ''addr'' parameter, Trace32 uses the USB interface and searches for a locally connected device.
 As an example, the ''make debug'' call on my PC looks like this:
 ```
 make debug t32_folder=/home/matthiasb/opt/t32/files t32_arch=pc_linux addr=lauterbach1
