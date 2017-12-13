@@ -18,19 +18,19 @@
  * blocks (e.g. each block is interpreted as an LET task)
  * (times given in micro seconds)
  */
-const EE_UINT32 C2_T10_RUNABLE_CET[C2_T10_RUNABLE_NUM] =	/**< \brief Runnable sequence table (WCETs) for T10 on C2  */
+const EE_UINT32 C2_T10_RUNNABLE_CET[C2_T10_RUNNABLE_NUM] =		/**< \brief Runnable sequence table (WCETs) for T10 on C2  */
 {
 		100,
 		200,
 		100,
 		150
 };
-const EE_UINT32 C2_T20_RUNABLE_CET[C2_T20_RUNABLE_NUM] =	/**< \brief Runnable sequence table (WCETs) for T20 on C2  */
+const EE_UINT32 C2_T20_RUNNABLE_CET[C2_T20_RUNNABLE_NUM] =		/**< \brief Runnable sequence table (WCETs) for T20 on C2  */
 {
 		400,
 		200
 };
-const EE_UINT32 C2_T100_RUNABLE_CET[C2_T100_RUNABLE_NUM] =	/**< \brief Runnable sequence table (WCETs) for T100 on C2 */
+const EE_UINT32 C2_T100_RUNNABLE_CET[C2_T100_RUNNABLE_NUM] =	/**< \brief Runnable sequence table (WCETs) for T100 on C2 */
 {
 		100,
 		200,
@@ -75,13 +75,13 @@ TASK(C2_T10)
 {
 	const unsigned int myId=C2_T10;
 	EventMaskType mask;
-	FUNC_CALL(C2_T10_RUNABLE_CET[0]);
+	FUNC_CALL(C2_T10_RUNNABLE_CET[0]);
 	WAIT_SP(C2_T10, C2_EV_T10, &mask);
-	FUNC_CALL(C2_T10_RUNABLE_CET[1]);
+	FUNC_CALL(C2_T10_RUNNABLE_CET[1]);
 	WAIT_SP(C2_T10, C2_EV_T10, &mask);
-	FUNC_CALL(C2_T10_RUNABLE_CET[2]);
+	FUNC_CALL(C2_T10_RUNNABLE_CET[2]);
 	WAIT_SP(C2_T10, C2_EV_T10, &mask);
-	FUNC_CALL(C2_T10_RUNABLE_CET[3]);
+	FUNC_CALL(C2_T10_RUNNABLE_CET[3]);
 	TerminateTask();
 }
 
@@ -93,9 +93,9 @@ TASK(C2_T20)
 {
 	const unsigned int myId=C2_T20;
 	EventMaskType mask;
-	FUNC_CALL(C2_T20_RUNABLE_CET[0]);
+	FUNC_CALL(C2_T20_RUNNABLE_CET[0]);
 	WAIT_SP(C2_T20, C2_EV_T20, &mask);
-	FUNC_CALL(C2_T20_RUNABLE_CET[1]);
+	FUNC_CALL(C2_T20_RUNNABLE_CET[1]);
 	TerminateTask();
 }
 
@@ -107,13 +107,13 @@ TASK(C2_T100)
 {
 	const unsigned int myId=C2_T100;
 	EventMaskType mask;
-	FUNC_CALL(C2_T100_RUNABLE_CET[0]);
+	FUNC_CALL(C2_T100_RUNNABLE_CET[0]);
 	WAIT_SP(C2_T100, C2_EV_T100, &mask);
-	FUNC_CALL(C2_T100_RUNABLE_CET[1]);
+	FUNC_CALL(C2_T100_RUNNABLE_CET[1]);
 	WAIT_SP(C2_T100, C2_EV_T100, &mask);
-	FUNC_CALL(C2_T100_RUNABLE_CET[2]);
+	FUNC_CALL(C2_T100_RUNNABLE_CET[2]);
 	WAIT_SP(C2_T100, C2_EV_T100, &mask);
-	FUNC_CALL(C2_T100_RUNABLE_CET[3]);
+	FUNC_CALL(C2_T100_RUNNABLE_CET[3]);
 	TerminateTask();
 }
 #else
@@ -132,8 +132,8 @@ TASK(C2_T10)
 	const unsigned int myId=C2_T10;
 	static unsigned int C2_T10_CNT = 0;
 
-	FUNC_CALL(C2_T10_RUNABLE_CET[C2_T10_CNT]);
-	C2_T10_CNT = (C2_T10_CNT + 1) % C2_T10_RUNABLE_NUM;
+	FUNC_CALL(C2_T10_RUNNABLE_CET[C2_T10_CNT]);
+	C2_T10_CNT = (C2_T10_CNT + 1) % C2_T10_RUNNABLE_NUM;
 	TerminateTask();
 }
 
@@ -146,8 +146,8 @@ TASK(C2_T20)
 	const unsigned int myId=C2_T20;
 	static unsigned int C2_T20_CNT = 0;
 
-	FUNC_CALL(C2_T20_RUNABLE_CET[C2_T20_CNT]);
-	C2_T20_CNT = (C2_T20_CNT + 1) % C2_T20_RUNABLE_NUM;
+	FUNC_CALL(C2_T20_RUNNABLE_CET[C2_T20_CNT]);
+	C2_T20_CNT = (C2_T20_CNT + 1) % C2_T20_RUNNABLE_NUM;
 	TerminateTask();
 }
 
@@ -160,8 +160,8 @@ TASK(C2_T100)
 	const unsigned int myId=C2_T100;
 	static unsigned int C2_T100_CNT = 0;
 
-	FUNC_CALL(C2_T100_RUNABLE_CET[C2_T100_CNT]);
-	C2_T100_CNT = (C2_T100_CNT + 1) % C2_T100_RUNABLE_NUM;
+	FUNC_CALL(C2_T100_RUNNABLE_CET[C2_T100_CNT]);
+	C2_T100_CNT = (C2_T100_CNT + 1) % C2_T100_RUNNABLE_NUM;
 	TerminateTask();
 }
 #endif
