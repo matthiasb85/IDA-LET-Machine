@@ -65,7 +65,7 @@ $(function() {
 <div class="title">The IDA-LET-Machine (ILM) </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>The ILM is a simple implementation of the logical execution time (LET) paradigm for the automotive domain. In general it is based on a double buffering, to implement a zero-time communication between different cores. You can find the doxygen generated documentation <a href="https://matthiasb85.github.io/IDA-LET-Machine/files.html" title="ILM documentation">here</a></p>
+<div class="textblock"><p>The ILM is a simple implementation of the logical execution time (LET) paradigm for the automotive domain. In general it is based on a double buffering, to implement a zero-time communication between different cores. You can find the doxygen generated documentation <a href="https://matthiasb85.github.io/IDA-LET-Machine/index.html" title="ILM documentation">here</a></p>
 <p>The ILM based was developed as an operating system (OS) and hardware independent module. At the moment, we support the standard OSEK/AUTOSAR OS API as the first OS port was based on ERIKA OS. The current hardware port is based on the CCU6 module of the AURIX TC2xx which is usually used for PWM generation.</p>
 <p>The ILM is developed by the "Institut für Datentechnik und Kommunikationsnetze" (engl: Institute of Computer and Network Engineering, abbreviation <b>IDA</b>) of the TU Braunschweig. During 2016 and 2017 the development was mainly influenced by a collabortaion between IDA and Daimler RD/EIS.</p>
 <h2>Where is the ILM intended for?</h2>
@@ -104,7 +104,7 @@ $(function() {
 <tr class="markdownTableBody" class="markdownTableRowOdd">
 <td class="markdownTableBodyLeft">6  </td><td class="markdownTableBodyLeft">Execute function block (10ms)  </td><td class="markdownTableBodyLeft">C0   </td></tr>
 <tr class="markdownTableBody" class="markdownTableRowEven">
-<td class="markdownTableBodyLeft">7  </td><td class="markdownTableBodyLeft">LET IRQ  </td><td class="markdownTableBodyLeft">C1   </td></tr>
+<td class="markdownTableBodyLeft">7  </td><td class="markdownTableBodyLeft">LET Event  </td><td class="markdownTableBodyLeft">C1   </td></tr>
 <tr class="markdownTableBody" class="markdownTableRowOdd">
 <td class="markdownTableBodyLeft">8  </td><td class="markdownTableBodyLeft">Start LET task (100ms)  </td><td class="markdownTableBodyLeft">C1   </td></tr>
 <tr class="markdownTableBody" class="markdownTableRowEven">
@@ -118,7 +118,7 @@ $(function() {
 <tr class="markdownTableBody" class="markdownTableRowEven">
 <td class="markdownTableBodyLeft">13  </td><td class="markdownTableBodyLeft">Execute function block (10ms)  </td><td class="markdownTableBodyLeft">C1   </td></tr>
 <tr class="markdownTableBody" class="markdownTableRowOdd">
-<td class="markdownTableBodyLeft">14  </td><td class="markdownTableBodyLeft">LET IRQ  </td><td class="markdownTableBodyLeft">C2   </td></tr>
+<td class="markdownTableBodyLeft">14  </td><td class="markdownTableBodyLeft">LET Event  </td><td class="markdownTableBodyLeft">C2   </td></tr>
 <tr class="markdownTableBody" class="markdownTableRowEven">
 <td class="markdownTableBodyLeft">15  </td><td class="markdownTableBodyLeft">Start LET task (100ms)  </td><td class="markdownTableBodyLeft">C2   </td></tr>
 <tr class="markdownTableBody" class="markdownTableRowOdd">
@@ -132,6 +132,11 @@ $(function() {
 <tr class="markdownTableBody" class="markdownTableRowOdd">
 <td class="markdownTableBodyLeft">20  </td><td class="markdownTableBodyLeft">Execute function block (10ms)  </td><td class="markdownTableBodyLeft">C2   </td></tr>
 </table>
+<ul>
+<li><b>LET IRQ/Event:</b> Set to 1 when processing an LET IRQ/Event. The AURIX HW port generates an CCU6 IRQ on C0 and redirectes the event to C1/2 via a general purpose service request (GPSRN).</li>
+<li><b>Start LET task (y):</b> Set to 1 if an LET task with period <em>y</em> (100/20/10) is activated. Set to 0 at the end of an LET task. As the LET tasks are sequenced back-to-back, only a small peak is visible between LET task with the same period <em>y</em>.</li>
+<li><b>Execute function block (y):</b> Set to 1 when the execution of the corresponding function block inside the corresponding OS task starts. Set to 0 when the block function finishes its execution. Again <em>y</em> denotes the corresponding period.</li>
+</ul>
 <p>The example includes mappings for the Infineon TriBoard TC275 and the Hitex ShieldBuddy. The mapping of the generic GPIO IDs to the physical outputs is given in ./Example/IO/gpio.c and results in:</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -179,6 +184,7 @@ $(function() {
 <tr class="markdownTableBody" class="markdownTableRowOdd">
 <td class="markdownTableBodyLeft">20  </td><td class="markdownTableBodyLeft">P00.12  </td><td class="markdownTableBodyLeft">P33.1   </td></tr>
 </table>
+<p>Connecting the physical IOs to an logic analyzer/sniffer oder oscilloskop should result in something like this: <a href="https://matthiasb85.github.io/IDA-LET-Machine/LET_schedule.png" title="LET Schedule">LET Schedule</a> </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
