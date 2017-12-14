@@ -1,7 +1,7 @@
 # The IDA-LET-Machine (ILM)
 The ILM is a simple implementation of the logical execution time (LET) paradigm for the automotive domain.
 In general it is based on a double buffering, to implement a zero-time communication between different cores.
-You can find the doxygen generated documentation [here](https://matthiasb85.github.io/IDA-LET-Machine/files.html "ILM documentation")
+You can find the doxygen generated documentation [here](https://matthiasb85.github.io/IDA-LET-Machine/index.html "ILM documentation")
 
 The ILM based was developed as an operating system (OS) and hardware independent module.
 At the moment, we support the standard OSEK/AUTOSAR OS API as the first OS port was based on ERIKA OS.
@@ -55,7 +55,7 @@ The reason for this is a bug inside the official CCU6 driver of the iLLD (which 
 
 ## Application example
 The application consist of 18 LET tasks.
-The layout of the example application can be found in ./Example/ilm_example.ods
+The layout of the example application can be found in ./Example/ilm_example.ods.
 The example uses a setup with three application cores.
 As the used AURIX microcontroller provides three cores, we use core C0 to generate the needed IRQ pattern.
 In addition, the application tasks are executed on all three cores.
@@ -75,3 +75,63 @@ As an example, the ''make debug'' call on my PC looks like this:
 ```
 make debug t32_folder=/home/matthiasb/opt/t32/files t32_arch=pc_linux addr=lauterbach1
 ```
+
+The application uses a generic GPIO interface and toggles each output for a given event inside the user defined ILM hook functions in ./Example/ILM/cfg/ilm_hooks.c
+
+| GPIO ID | Event                         | Core | 
+|:------- |:----------------------------- |:---- |
+| 0       | LET IRQ                       | C0   |
+| 1       | Start LET task (100ms)        | C0   |
+| 2       | Execute function block (100ms)| C0   |
+| 3       | Start LET task (20ms)         | C0   |
+| 4       | Execute function block (20ms) | C0   |
+| 5       | Start LET task (10ms)         | C0   |
+| 6       | Execute function block (10ms) | C0   |
+| 7       | LET Event                     | C1   |
+| 8       | Start LET task (100ms)        | C1   |
+| 9       | Execute function block (100ms)| C1   |
+| 10      | Start LET task (20ms)         | C1   |
+| 11      | Execute function block (20ms) | C1   |
+| 12      | Start LET task (10ms)         | C1   |
+| 13      | Execute function block (10ms) | C1   |
+| 14      | LET Event                     | C2   |
+| 15      | Start LET task (100ms)        | C2   |
+| 16      | Execute function block (100ms)| C2   |
+| 17      | Start LET task (20ms)         | C2   |
+| 18      | Execute function block (20ms) | C2   |
+| 19      | Start LET task (10ms)         | C2   |
+| 20      | Execute function block (10ms) | C2   |
+
+ * **LET IRQ/Event:** Set to 1 when processing an LET IRQ/Event. The AURIX HW port generates an CCU6 IRQ on C0 and redirectes the event to C1/2 via a general purpose service request (GPSRN). 
+ * **Start LET task (y):** Set to 1 if an LET task with period *y* (100/20/10) is activated. Set to 0 at the end of an LET task. As the LET tasks are sequenced back-to-back, only a small peak is visible between LET task with the same period *y*.
+ * **Execute function block (y):** Set to 1 when the execution of the corresponding function block inside the corresponding OS task starts. Set to 0 when the block function finishes its execution. Again *y* denotes the corresponding period.
+
+The example includes mappings for the Infineon TriBoard TC275 and the Hitex ShieldBuddy.
+The mapping of the generic GPIO IDs to the physical outputs is given in ./Example/IO/gpio.c and results in:
+
+| GPIO ID | Triboard TC275 | ShieldBuddy    | 
+|:------- |:-------------- |:-------------- |
+| 0       | P14.1          | P14.7          |
+| 1       | P00.0          | P14.8          |
+| 2       | P00.1          | P14.9          |
+| 3       | P00.2          | P14.10         |
+| 4       | P00.3          | P15.6          |
+| 5       | P00.4          | P15.7          |
+| 6       | P00.5          | P20.1          |
+| 7       | P00.6          | P10.1          |
+| 8       | P00.7          | P10.0          |
+| 9       | P11.9          | P33.6          |
+| 10      | P11.11         | P33.0          |
+| 11      | P11.2          | P33.4          |
+| 12      | P11.6          | P00.6          |
+| 13      | P21.0          | P00.7          |
+| 14      | P14.0          | P00.8          |
+| 15      | P15.6          | P33.12         |
+| 16      | P00.8          | P33.11         |
+| 17      | P00.9          | P02.8          |
+| 18      | P00.10         | P02.7          |
+| 19      | P00.11         | P02.6          |
+| 20      | P00.12         | P33.1          |
+
+Connecting the physical IOs to an logic analyzer/sniffer oder oscilloskop should result in something like this:
+[LET Schedule](https://matthiasb85.github.io/IDA-LET-Machine/LET_schedule.png "LET Schedule")
