@@ -16,6 +16,7 @@ function clean_3rdparty {
 
 function clean_download {
   echo "Remove old archives"
+  [ ! -d ./$D_FOLDER ] && return
   cd $D_FOLDER
   rm $ERIKA_ARC
   rm $ILLD_ARC
@@ -33,6 +34,7 @@ function get_iLLD {
 
 function download_archieve {
   echo "Download archives"
+  [ ! -d ./$D_FOLDER ] && mkdir $D_FOLDER
   [ ! -f ./$D_FOLDER/$ERIKA_ARC ] && wget -P ./$D_FOLDER/ $ERIKA_URL
   [ ! -f ./$D_FOLDER/$ILLD_ARC ] && [ ! -f ./$D_FOLDER/$AURIX_ILLD_ARC ] && get_iLLD
 }
