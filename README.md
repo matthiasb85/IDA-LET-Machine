@@ -82,29 +82,29 @@ The application uses a generic GPIO interface and toggles each output for a give
 |:------- |:----------------------------- |:---- |
 | 0       | LET IRQ                       | C0   |
 | 1       | Start LET task (100ms)        | C0   |
-| 2       | Execute function block (100ms)| C0   |
+| 2       | WCET function block (100ms)   | C0   |
 | 3       | Start LET task (20ms)         | C0   |
-| 4       | Execute function block (20ms) | C0   |
+| 4       | WCET function block (20ms)    | C0   |
 | 5       | Start LET task (10ms)         | C0   |
-| 6       | Execute function block (10ms) | C0   |
+| 6       | WCET function block (10ms)    | C0   |
 | 7       | LET Event                     | C1   |
 | 8       | Start LET task (100ms)        | C1   |
-| 9       | Execute function block (100ms)| C1   |
+| 9       | WCET function block (100ms)   | C1   |
 | 10      | Start LET task (20ms)         | C1   |
-| 11      | Execute function block (20ms) | C1   |
+| 11      | WCET function block (20ms)    | C1   |
 | 12      | Start LET task (10ms)         | C1   |
-| 13      | Execute function block (10ms) | C1   |
+| 13      | WCET function block (10ms)    | C1   |
 | 14      | LET Event                     | C2   |
 | 15      | Start LET task (100ms)        | C2   |
-| 16      | Execute function block (100ms)| C2   |
+| 16      | WCET function block (100ms)   | C2   |
 | 17      | Start LET task (20ms)         | C2   |
-| 18      | Execute function block (20ms) | C2   |
+| 18      | WCET function block (20ms)    | C2   |
 | 19      | Start LET task (10ms)         | C2   |
-| 20      | Execute function block (10ms) | C2   |
+| 20      | WCET function block (10ms)    | C2   |
 
  * **LET IRQ/Event:** Set to 1 when processing an LET IRQ/Event. The AURIX HW port generates an CCU6 IRQ on C0 and redirectes the event to C1/2 via a general purpose service request (GPSRN). 
  * **Start LET task (y):** Set to 1 if an LET task with period *y* (100/20/10) is activated. Set to 0 at the end of an LET task. As the LET tasks are sequenced back-to-back, only a small peak is visible between LET task with the same period *y*.
- * **Execute function block (y):** Set to 1 when the execution of the corresponding function block inside the corresponding OS task starts. Set to 0 when the block function finishes its execution. Again *y* denotes the corresponding period.
+ * **WCET function block (y):** Set to 1 when the execution of the corresponding function block inside the corresponding OS task starts. Set to 0 when the block function finishes its execution. Again *y* denotes the corresponding period. Measuring the resulting pulse should lead to a value close to the  defined worst-case execution time (WCET) defined in app_core_[0,1,2].c
 
 The example includes mappings for the Infineon TriBoard TC275 and the Hitex ShieldBuddy.
 The mapping of the generic GPIO IDs to the physical outputs is given in ./Example/IO/gpio.c and results in:
@@ -133,5 +133,5 @@ The mapping of the generic GPIO IDs to the physical outputs is given in ./Exampl
 | 19      | P00.11         | P02.6          |
 | 20      | P00.12         | P33.1          |
 
-Connecting the physical IOs to a logic analyzer/sniffer oder oscilloscope should result in something like this:
+Connecting the physical IOs to a logic analyzer/sniffer or oscilloscope should result in something like this:
 ![LET Schedule](https://matthiasb85.github.io/IDA-LET-Machine/LET_schedule.png "LET Schedule")
