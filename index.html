@@ -83,9 +83,103 @@ $(function() {
 <div class="fragment"><div class="line">git clone https://github.com/matthiasb85/IDA-LET-Machine.git</div><div class="line">cd ./IDA-LET-Machine</div><div class="line">cd Example</div><div class="line">make</div></div><!-- fragment --><p> The Makefile checks if the 3rdParty software is available, if this is not the case the ./3rdParty/Setup3rdParty.sh script is executed. The script downloads the corresponding standalone version of ERIKA OS and RT-Druid, and applies some patches on it. The hardware port for the AURIX microcontroller uses Infineons iLLD library, which unfortunately is only available after registration. If the library is not available in ./3rdParty/Download when ./3rdParty/Setup3rdParty.sh is called, the script reports:</p>
 <div class="fragment"><div class="line">Can&#39;t find Infineon iLLD!</div><div class="line">  1.) Please get in contact with Infineon</div><div class="line">  2.) Download the AURIX_iLLD_Package_TC2xx_v1.0.1.3.0 driver package</div><div class="line">  3.) Copy AURIX_iLLD_Package_TC2xx_v1.0.1.3.0.zip to ./3rdParty/Download</div><div class="line">  4.) Run &#39;make&#39;/&#39;make prepare&#39; in ./Example  or Setup3rdPartySoftware.sh in ./3rdParty</div></div><!-- fragment --><p> An important constraint is, that the entire library is available as source code. The reason for this is a bug inside the official CCU6 driver of the iLLD (which is patched during ./3rdParty/Setup3rdParty.sh).</p>
 <h2>Application example</h2>
-<p>The application consist of 18 LET tasks. The layout of the example application can be found in ./Example/ilm_example.ods The example uses a setup with three application cores. As the used AURIX microcontroller provides three cores, we use core C0 to generate the needed IRQ pattern. In addition, the application tasks are executed on all three cores. The worst-case execution time (WCET) of the corresponding block is assigned to an LET task on both application cores. If no function block is assigned to an LET task on C0, C1 or C2, the corresponding WCET is zero. In order to simulate an accurate timing behavior of the function blocks, we used an optimized <b>nop</b> loop consuming CPU time. Due to the different periods of the system, the hyperperiod is 100ms.</p>
+<p>The application consist of 18 LET tasks. The layout of the example application can be found in ./Example/ilm_example.ods. The example uses a setup with three application cores. As the used AURIX microcontroller provides three cores, we use core C0 to generate the needed IRQ pattern. In addition, the application tasks are executed on all three cores. The worst-case execution time (WCET) of the corresponding block is assigned to an LET task on both application cores. If no function block is assigned to an LET task on C0, C1 or C2, the corresponding WCET is zero. In order to simulate an accurate timing behavior of the function blocks, we used an optimized <b>nop</b> loop consuming CPU time. Due to the different periods of the system, the hyperperiod is 100ms.</p>
 <p>During execution of the simulated function blocks, we use pin toggles to indentify the current states. Those pin toggles are issued through the ILM hooks and at execution begin/end of a function block. The physical pin magging is located in ./Example/IO/gpio.c and the hook functions in ./Example/ILM/ilm_hooks.c</p>
-<p>If you use a Lauterbach Trace32 based setup, you can use the ''make debug'' command inside ./Example to start a debug session. With ''t32_folder'', ''t32_arch'' and ''addr'' you can pass Trace32 base folder, host CPU architecure and IP address (DNS name) of your trace hardware to the system. If you omit the ''addr'' parameter, Trace32 uses the USB interface and searches for a locally connected device. As an example, the ''make debug'' call on my PC looks like this: </p><div class="fragment"><div class="line">make debug t32_folder=/home/matthiasb/opt/t32/files t32_arch=pc_linux addr=lauterbach1</div></div><!-- fragment --> </div></div><!-- contents -->
+<p>If you use a Lauterbach Trace32 based setup, you can use the ''make debug'' command inside ./Example to start a debug session. With ''t32_folder'', ''t32_arch'' and ''addr'' you can pass Trace32 base folder, host CPU architecure and IP address (DNS name) of your trace hardware to the system. If you omit the ''addr'' parameter, Trace32 uses the USB interface and searches for a locally connected device. As an example, the ''make debug'' call on my PC looks like this: </p><div class="fragment"><div class="line">make debug t32_folder=/home/matthiasb/opt/t32/files t32_arch=pc_linux addr=lauterbach1</div></div><!-- fragment --><p>The application uses a generic GPIO interface and toggles each output for a given event inside the user defined ILM hook functions in ./Example/ILM/cfg/ilm_hooks.c</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadLeft">GPIO ID  </th><th class="markdownTableHeadLeft">Event  </th><th class="markdownTableHeadLeft">Core   </th></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">0  </td><td class="markdownTableBodyLeft">LET IRQ  </td><td class="markdownTableBodyLeft">C0   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">1  </td><td class="markdownTableBodyLeft">Start LET task (100ms)  </td><td class="markdownTableBodyLeft">C0   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">2  </td><td class="markdownTableBodyLeft">Execute function block (100ms)  </td><td class="markdownTableBodyLeft">C0   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">3  </td><td class="markdownTableBodyLeft">Start LET task (20ms)  </td><td class="markdownTableBodyLeft">C0   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">4  </td><td class="markdownTableBodyLeft">Execute function block (20ms)  </td><td class="markdownTableBodyLeft">C0   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">5  </td><td class="markdownTableBodyLeft">Start LET task (10ms)  </td><td class="markdownTableBodyLeft">C0   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">6  </td><td class="markdownTableBodyLeft">Execute function block (10ms)  </td><td class="markdownTableBodyLeft">C0   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">7  </td><td class="markdownTableBodyLeft">LET IRQ  </td><td class="markdownTableBodyLeft">C1   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">8  </td><td class="markdownTableBodyLeft">Start LET task (100ms)  </td><td class="markdownTableBodyLeft">C1   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">9  </td><td class="markdownTableBodyLeft">Execute function block (100ms)  </td><td class="markdownTableBodyLeft">C1   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">10  </td><td class="markdownTableBodyLeft">Start LET task (20ms)  </td><td class="markdownTableBodyLeft">C1   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">11  </td><td class="markdownTableBodyLeft">Execute function block (20ms)  </td><td class="markdownTableBodyLeft">C1   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">12  </td><td class="markdownTableBodyLeft">Start LET task (10ms)  </td><td class="markdownTableBodyLeft">C1   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">13  </td><td class="markdownTableBodyLeft">Execute function block (10ms)  </td><td class="markdownTableBodyLeft">C1   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">14  </td><td class="markdownTableBodyLeft">LET IRQ  </td><td class="markdownTableBodyLeft">C2   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">15  </td><td class="markdownTableBodyLeft">Start LET task (100ms)  </td><td class="markdownTableBodyLeft">C2   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">16  </td><td class="markdownTableBodyLeft">Execute function block (100ms)  </td><td class="markdownTableBodyLeft">C2   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">17  </td><td class="markdownTableBodyLeft">Start LET task (20ms)  </td><td class="markdownTableBodyLeft">C2   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">18  </td><td class="markdownTableBodyLeft">Execute function block (20ms)  </td><td class="markdownTableBodyLeft">C2   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">19  </td><td class="markdownTableBodyLeft">Start LET task (10ms)  </td><td class="markdownTableBodyLeft">C2   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">20  </td><td class="markdownTableBodyLeft">Execute function block (10ms)  </td><td class="markdownTableBodyLeft">C2   </td></tr>
+</table>
+<p>The example includes mappings for the Infineon TriBoard TC275 and the Hitex ShieldBuddy. The mapping of the generic GPIO IDs to the physical outputs is given in ./Example/IO/gpio.c and results in:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadLeft">GPIO ID  </th><th class="markdownTableHeadLeft">Triboard TC275  </th><th class="markdownTableHeadLeft">ShieldBuddy   </th></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">0  </td><td class="markdownTableBodyLeft">P14.1  </td><td class="markdownTableBodyLeft">P14.7   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">1  </td><td class="markdownTableBodyLeft">P00.0  </td><td class="markdownTableBodyLeft">P14.8   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">2  </td><td class="markdownTableBodyLeft">P00.1  </td><td class="markdownTableBodyLeft">P14.9   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">3  </td><td class="markdownTableBodyLeft">P00.2  </td><td class="markdownTableBodyLeft">P14.10   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">4  </td><td class="markdownTableBodyLeft">P00.3  </td><td class="markdownTableBodyLeft">P15.6   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">5  </td><td class="markdownTableBodyLeft">P00.4  </td><td class="markdownTableBodyLeft">P15.7   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">6  </td><td class="markdownTableBodyLeft">P00.5  </td><td class="markdownTableBodyLeft">P20.1   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">7  </td><td class="markdownTableBodyLeft">P00.6  </td><td class="markdownTableBodyLeft">P10.1   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">8  </td><td class="markdownTableBodyLeft">P00.7  </td><td class="markdownTableBodyLeft">P10.0   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">9  </td><td class="markdownTableBodyLeft">P11.9  </td><td class="markdownTableBodyLeft">P33.6   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">10  </td><td class="markdownTableBodyLeft">P11.11  </td><td class="markdownTableBodyLeft">P33.0   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">11  </td><td class="markdownTableBodyLeft">P11.2  </td><td class="markdownTableBodyLeft">P33.4   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">12  </td><td class="markdownTableBodyLeft">P11.6  </td><td class="markdownTableBodyLeft">P00.6   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">13  </td><td class="markdownTableBodyLeft">P21.0  </td><td class="markdownTableBodyLeft">P00.7   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">14  </td><td class="markdownTableBodyLeft">P14.0  </td><td class="markdownTableBodyLeft">P00.8   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">15  </td><td class="markdownTableBodyLeft">P15.6  </td><td class="markdownTableBodyLeft">P33.12   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">16  </td><td class="markdownTableBodyLeft">P00.8  </td><td class="markdownTableBodyLeft">P33.11   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">17  </td><td class="markdownTableBodyLeft">P00.9  </td><td class="markdownTableBodyLeft">P02.8   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">18  </td><td class="markdownTableBodyLeft">P00.10  </td><td class="markdownTableBodyLeft">P02.7   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">19  </td><td class="markdownTableBodyLeft">P00.11  </td><td class="markdownTableBodyLeft">P02.6   </td></tr>
+<tr class="markdownTableBody" class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">20  </td><td class="markdownTableBodyLeft">P00.12  </td><td class="markdownTableBodyLeft">P33.1   </td></tr>
+</table>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">
