@@ -134,4 +134,4 @@ The mapping of the generic GPIO IDs to the physical outputs is given in ./Exampl
 | 20      | P00.12         | P33.1          |
 
 Connecting the physical IOs to an logic analyzer/sniffer oder oscilloskop should result in something like this:
-[LET Schedule](https://matthiasb85.github.io/IDA-LET-Machine/LET_schedule.png "LET Schedule")
+![LET Schedule](https://matthiasb85.github.io/IDA-LET-Machine/LET_schedule.png "LET Schedule")
