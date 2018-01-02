@@ -26,11 +26,13 @@ $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.c
 
 $(CFGOBJ): $(CFGSRC)
 	@echo 'Building file: $<'
+	@mkdir -p $(@D)
 	@$(CC) -c $(CFLAGS) -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o $@ $< > /dev/null
 	@$(CC) -c $(CFLAGS) $< -E -o $(@:%.o=%.i)
 
 $(PROG) : $(OBJECTS) $(CFGOBJ)
 	@echo 'Linking: $@'
+	@mkdir -p $(@D)
 	@$(AR) $(LDFLAGS) -o $@ $^ >/dev/null
 
 all: $(PROG)
