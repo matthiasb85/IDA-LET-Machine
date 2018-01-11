@@ -3,8 +3,8 @@ The ILM is a simple implementation of the logical execution time (LET) paradigm 
 In general it is based on a double buffering, to implement a zero-time communication between different cores.
 You can find the doxygen generated documentation [here](https://matthiasb85.github.io/IDA-LET-Machine/index.html "ILM documentation")
 
-The ILM based was developed as an operating system (OS) and hardware independent module.
-At the moment, we support the standard OSEK/AUTOSAR OS API as the first OS port was based on ERIKA OS.
+The ILM was developed as an operating system (OS) and hardware independent module.
+At the moment, we support the standard OSEK/AUTOSAR OS API, as the first OS port was based on ERIKA OS.
 The current hardware port is based on the CCU6 module of the AURIX TC2xx which is usually used for PWM generation.
 
 The ILM is developed by the "Institut für Datentechnik und Kommunikationsnetze" (engl: Institute of Computer and
