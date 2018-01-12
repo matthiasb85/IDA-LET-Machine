@@ -1,6 +1,6 @@
 BUILD_DIR = ./Build
 THIRD_PARTY = ../3rdParty
-RT_DRUID = $(THIRD_PARTY)/RT-Druid/
+RT_DRUID = $(THIRD_PARTY)/RT-Druid
 OIL_FILE = ./conf.oil
 ILLD_LIB = $(THIRD_PARTY)/iLLD_Build/lib/libiLLD.a
 RT_DRUID_SH = $(RT_DRUID)/evidence/generate_code.sh
@@ -18,6 +18,14 @@ ifeq ($(shell test -e $(OIL_MD5) && md5sum -c --status $(OIL_MD5) && echo -n yes
 OIL_UNCHANGED = TRUE
 endif
 
+ifeq ($(shell test \! -e $(ILLD_LIB)  && echo -n no),no)
+PREPARE_FIRST = TRUE
+endif
+
+ifeq ($(shell test \! -e $(RT_DRUID_SH)  && echo -n no),no)
+PREPARE_FIRST = TRUE
+endif
+
 ifneq ($(strip $(addr)),)
 DEBUG_P += -i $(addr)
 endif
@@ -28,11 +36,15 @@ ifneq ($(strip $(t32_arch)),)
 DEBUG_P += -a $(t32_arch)
 endif
 
+.PHONY: all
+
 all: rt-druid compile
 	@echo "Done"
 
+ifeq ($(PREPARE_FIRST),TRUE)
 $(ILLD_LIB): prepare
 $(RT_DRUID_SH): prepare
+endif
 
 prepare:
 	@echo "Preparing 3rdParty Software ";\
@@ -69,4 +81,4 @@ distclean: clean
 	@echo "Clean 3rdParty Software! Your iLLD archieve won't be deleted!";\
         cd $(THIRD_PARTY);\
         $(PREPARE_SH) clean;\
-        cd -;\
+	cd -;\

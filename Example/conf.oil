@@ -58,7 +58,7 @@ CPU test_application {
     };
 
     MCU_DATA = TRICORE {
-      MODEL = TC27x;
+      MODEL = TC27xC;
     };
 
     BOARD_DATA = TRIBOARD_TC2X5;
