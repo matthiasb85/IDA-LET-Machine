@@ -54,8 +54,8 @@ An important constraint is, that the entire library is available as source code.
 The reason for this is a bug inside the official CCU6 driver of the iLLD (which is patched during ./3rdParty/Setup3rdParty.sh).
 
 ## Supported Toolchains
-At the moment only the gcc based Tricore Toolchain from HighTec is supported by application the example.
-This limitation is based on the hardware port of AURIX microcontroller.
+At the moment only the gcc based Tricore Toolchain from HighTec is supported by the application example.
+This limitation is based on the hardware port of the AURIX microcontroller.
 ILM core as well as the ERIKA OS port should work with many more gcc based compiler toolchains.
 Tested toolchains are:
 
