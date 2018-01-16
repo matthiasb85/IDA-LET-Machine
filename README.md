@@ -53,6 +53,16 @@ Can't find Infineon iLLD!
 An important constraint is, that the entire library is available as source code. 
 The reason for this is a bug inside the official CCU6 driver of the iLLD (which is patched during ./3rdParty/Setup3rdParty.sh).
 
+## Supported Toolchains
+At the moment only the gcc based Tricore Toolchain from HighTec is supported by application the example.
+This limitation is based on the hardware port of AURIX microcontroller.
+ILM core as well as the ERIKA OS port should work with many more gcc based compiler toolchains.
+Tested toolchains are:
+
+* **HighTec v4.9.1.0 on Windows with Cygwin64**
+* **HighTec v4.6.5.0 on Linux** 
+* **HighTec v4.6.6.0 on Linux** 
+
 ## Application example
 The application consist of 18 LET tasks.
 The layout of the example application can be found in ./Example/ilm_example.ods.
