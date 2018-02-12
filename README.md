@@ -119,7 +119,7 @@ The application uses a generic GPIO interface and toggles each output for a give
 The example includes mappings for the Infineon TriBoard TC275 and the Hitex ShieldBuddy.
 The mapping of the generic GPIO IDs to the physical outputs is given in ./Example/IO/gpio.c and results in:
 
-| GPIO ID | Triboard TC275 | ShieldBuddy    | 
+| GPIO ID |  ShieldBuddy   | Triboard TC275 | 
 |:------- |:-------------- |:-------------- |
 | 0       | P14.1          | P14.7          |
 | 1       | P00.0          | P14.8          |
