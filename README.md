@@ -9,7 +9,7 @@ The current hardware port is based on the CCU6 module of the AURIX TC2xx which i
 
 The ILM is developed by the "Institut für Datentechnik und Kommunikationsnetze" (engl: Institute of Computer and
 Network Engineering, abbreviation **IDA**) of the TU Braunschweig.
-During 2016 and 2017 the development was mainly influenced by a collabortaion between IDA and Daimler RD/EIS.
+During 2016 and 2017 the development was mainly influenced by a collaboration between IDA and Daimler RD/EIS.
 
 ## What is the ILM intended for?
 Our mission is, to provide a simple and efficient test framework for the LET paradigm.
