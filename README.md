@@ -11,12 +11,12 @@ The ILM is developed by the "Institut für Datentechnik und Kommunikationsnetze"
 Network Engineering, abbreviation **IDA**) of the TU Braunschweig.
 During 2016 and 2017 the development was mainly influenced by a collabortaion between IDA and Daimler RD/EIS.
 
-## Where is the ILM intended for?
+## What is the ILM intended for?
 Our mission is, to provide a simple and efficient test framework for the LET paradigm.
 This framework can be used in academia (e.g. for evaluation) or also for prototyping.
 In general the ILM can be used everywhere, where you would like to test something new, but don't want to have a huge ammount of 3rd party software in the background.   
 
-## Where is the ILM not intended for?
+## What is the ILM not intended for?
 Although the license model does not exclude it explicitly, we would recommend not to use the ILM in any kind of series implementation.
 We have written the software to the best of our knowledge and belief, nevertheless it may still contain some bugs.
 Therefore we can not provide any kind of guarantee for functional correctness.
