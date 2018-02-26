@@ -1,0 +1,6 @@
+B::
+
+SYStem.POLLING SLOW
+SETUP.URATE 1.s
+
+ENDDO
