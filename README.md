@@ -1,6 +1,6 @@
 # The IDA-LET-Machine (ILM)
 The ILM is a simple implementation of the logical execution time (LET) paradigm for the automotive domain.
-In general it is based on double buffering, to implement zero-time communication between different cores.
+In general it is based on double buffering, to implement zero-time communication between different cores which was introduced [here]("https://ieeexplore.ieee.org/document/7733563/").
 You can find the doxygen generated documentation [here](https://matthiasb85.github.io/IDA-LET-Machine/index.html "ILM documentation")
 
 The ILM was developed as an operating system (OS) and hardware independent module.
