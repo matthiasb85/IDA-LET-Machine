@@ -153,7 +153,7 @@ typedef struct
 typedef struct
 {
 	ILM_DATA_OUT_T	*pInput;														/**< \brief Pointer to double buffer struct, used as input				*/
-	void 			*pLocalCopy;													/**< \brief Pointer to local backup pointer								*/
+	void 			**pLocalCopy;													/**< \brief Pointer to local backup pointer								*/
 }ILM_DATA_IN_T;
 
 /**

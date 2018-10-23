@@ -75,7 +75,7 @@ static void _ILM_BackupReadPointer(ILM_DATA_IN_T *pData)
 	{
 		while(pData->pInput)
 		{
-			pData->pLocalCopy = pData->pInput->Read.Generic;
+			*(pData->pLocalCopy) = pData->pInput->Read.Generic;
 			pData++;
 		}
 	}
